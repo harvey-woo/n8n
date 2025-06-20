@@ -392,9 +392,25 @@ export async function loadLanguage(language: string) {
 		return await setLanguage(language);
 	}
 
-	const { numberFormats, ...rest } = (await import(`@n8n/i18n/locales/${language}.json`)).default;
+	let localeData: unknown;
+	let numberFormats: unknown;
 
-	i18nInstance.global.setLocaleMessage(language, rest);
+	try {
+		// Try to load as a single JSON file first (e.g., en.json)
+		const singleFileData = (await import(`@n8n/i18n/locales/${language}.json`)).default;
+		const { numberFormats: nf, ...rest } = singleFileData;
+		localeData = rest;
+		numberFormats = nf;
+	} catch (error) {
+		// If single file doesn't exist, try to load from folder structure
+		try {
+			localeData = await loadLanguageFromFolder(language);
+		} catch (folderError) {
+			throw new Error(`Language '${language}' not found`);
+		}
+	}
+
+	i18nInstance.global.setLocaleMessage(language, localeData);
 
 	if (numberFormats) {
 		i18nInstance.global.setNumberFormat(language, numberFormats);
@@ -403,6 +419,36 @@ export async function loadLanguage(language: string) {
 	loadedLanguages.push(language);
 
 	return await setLanguage(language);
+}
+
+async function loadLanguageFromFolder(language: string): Promise<any> {
+	// Define the files that should be loaded for a language folder
+	const moduleNames = [
+		'auth',
+		'base',
+		'credentials',
+		'executions',
+		'generic',
+		'main-sidebar',
+		'ndv',
+		'node-creator',
+		'node-view',
+		'settings',
+	];
+
+	const mergedTranslations: unknown = {};
+
+	// Load each module and merge into the main translations object
+	for (const moduleName of moduleNames) {
+		const moduleData = (await import(`@n8n/i18n/locales/${language}/${moduleName}.json`)).default;
+		Object.assign(mergedTranslations, moduleData);
+	}
+
+	if (Object.keys(mergedTranslations).length === 0) {
+		throw new Error(`No translation modules found for language '${language}'`);
+	}
+
+	return mergedTranslations;
 }
 
 /**
