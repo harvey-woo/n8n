@@ -1,0 +1,31 @@
+{
+	"_reusableBaseText": {
+		"cancel": "取消",
+		"codeNodeEditor": {
+			"linter": {
+				"useJson": "在 `.json` 下访问项目的属性，例如 `item.json`"
+			},
+			"completer": {
+				"all": "返回节点输出项目的数组",
+				"first": "返回节点输出的第一个项目",
+				"last": "返回节点输出的最后一个项目",
+				"itemMatching": "返回匹配的项目，即用于在指定索引处生成当前节点中项目的项目。"
+			}
+		},
+		"name": "名称",
+		"save": "保存",
+		"dismiss": "忽略",
+		"unlimited": "无限制",
+		"activate": "激活",
+		"error": "错误"
+	},
+	"_reusableDynamicText": {
+		"readMore": "阅读更多",
+		"learnMore": "了解更多",
+		"moreInfo": "更多信息",
+		"oauth2": {
+			"clientId": "客户端ID",
+			"clientSecret": "客户端密钥"
+		}
+	}
+}
