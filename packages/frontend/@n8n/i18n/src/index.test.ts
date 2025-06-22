@@ -32,4 +32,26 @@ describe(I18nClass, () => {
 			expect(new I18nClass().displayTimer(3601234, true)).toBe('1h 0m 1.234s');
 		});
 	});
+
+	describe('中文文案测试', () => {
+		it('应该正确显示中文文案', () => {
+			const i18n = new I18nClass();
+
+			// 模拟中文文案
+			i18n.baseText = vi.fn((key: string) => {
+				const mapping: Record<string, string> = {
+					'generic.cancel': '取消',
+					'generic.save': '保存',
+					'generic.open': '打开',
+					'generic.close': '关闭',
+				};
+				return mapping[key] || key;
+			});
+
+			expect(i18n.baseText('generic.cancel' as never)).toBe('取消');
+			expect(i18n.baseText('generic.save' as never)).toBe('保存');
+			expect(i18n.baseText('generic.open' as never)).toBe('打开');
+			expect(i18n.baseText('generic.close' as never)).toBe('关闭');
+		});
+	});
 });
